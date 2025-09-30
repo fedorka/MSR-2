@@ -224,6 +224,22 @@ number:
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
     unit_of_measurement: "cm"
+  - platform: template
+    name: "LTR390 Light Minumum Update Delta"
+    id: ltr390_lux_delta
+    device_class: illuminance
+    min_value: 0
+    max_value: 100
+    step: .1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 20
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+    unit_of_measurement: "lux"
+
 
 # Buzzer
 output:
@@ -541,17 +557,17 @@ sensor:
       id: ltr390light
       filters:
         - lambda: |-
-            static float last_reported_value = -21.0;
+            static float last_reported_value = -(abs(id(ltr390_lux_delta).state)) - 1.0;
             float current_value = x;
 
             // Check if the reduce_db_reporting switch is on
             if (id(reduce_db_reporting).state) {
-              // Apply delta filter: only report if the value has changed by 20 or more
-              if (abs(current_value - last_reported_value) >= 20.0) {
+              // Apply delta filter: only report if the value has changed by requested delta or more
+              if (abs(current_value - last_reported_value) >= id(ltr390_lux_delta).state) {
                 last_reported_value = current_value;  // Update the last reported value
                 return current_value;
               } else {
-                // Return the last reported value without updating if change is less than 20
+                // Return the last reported value without updating if change is less than requested delta
                 return {};  // Discard the update
               }
             } else {
@@ -564,13 +580,13 @@ sensor:
       id: ltr390uvindex
       filters:
         - lambda: |-
-            static float last_reported_value = -21.0;
+            static float last_reported_value = -2.0;
             float current_value = x;
 
             // Check if the reduce_db_reporting switch is on
             if (id(reduce_db_reporting).state) {
-              // Apply delta filter: only report if the value has changed by 20 or more
-              if (abs(current_value - last_reported_value) >= 20.0) {
+              // Apply delta filter: only report if the value has changed by 1 or more
+              if (abs(current_value - last_reported_value) >= 1.0) {
                 last_reported_value = current_value;  // Update the last reported value
                 return current_value;
               } else {
