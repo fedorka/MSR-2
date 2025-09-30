@@ -547,7 +547,7 @@ sensor:
             // Check if the reduce_db_reporting switch is on
             if (id(reduce_db_reporting).state) {
               // Apply delta filter: only report if the value has changed by 2 or more
-              if (abs(current_value - last_reported_value) >= 20.0) {
+              if (abs(current_value - last_reported_value) >= 5.0) {
                 last_reported_value = current_value;  // Update the last reported value
                 return current_value;
               } else {
@@ -570,7 +570,7 @@ sensor:
             // Check if the reduce_db_reporting switch is on
             if (id(reduce_db_reporting).state) {
               // Apply delta filter: only report if the value has changed by 2 or more
-              if (abs(current_value - last_reported_value) >= 20.0) {
+              if (abs(current_value - last_reported_value) >= 1.0) {
                 last_reported_value = current_value;  // Update the last reported value
                 return current_value;
               } else {
